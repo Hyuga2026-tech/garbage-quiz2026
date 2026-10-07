@@ -1,0 +1,287 @@
+@import url('https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700;900&family=Noto+Sans+JP:wght@400;500;700&display=swap');
+
+:root{
+  --bg: #F3F6F1;
+  --panel: #FFFFFF;
+  --ink: #22301F;
+  --ink-soft: #55614F;
+  --line: #D9E2D3;
+  --green: #4C8C4A;
+  --green-soft: #E4F0E1;
+  --orange: #E08A3C;
+  --gray: #6B7280;
+  --red: #C1443C;
+  --red-soft: #FBE9E6;
+  --radius: 18px;
+  --shadow: 0 10px 30px rgba(34,48,31,0.08);
+}
+
+*{ box-sizing:border-box; }
+
+html,body{
+  margin:0;
+  padding:0;
+  background:var(--bg);
+  color:var(--ink);
+  font-family:'Noto Sans JP', sans-serif;
+  line-height:1.7;
+}
+
+h1,h2,h3, .display{
+  font-family:'Zen Maru Gothic', 'Noto Sans JP', sans-serif;
+  margin:0;
+  color:var(--ink);
+}
+
+.wrap{
+  max-width:640px;
+  margin:0 auto;
+  padding:32px 20px 80px;
+}
+
+/* ---------- Header / Hero ---------- */
+.hero{
+  padding:8px 0 28px;
+}
+.hero .eyebrow-icon{
+  width:52px; height:52px;
+  display:block;
+  margin-bottom:14px;
+}
+.hero h1{
+  font-size:clamp(28px,6vw,38px);
+  font-weight:900;
+  letter-spacing:0.01em;
+}
+.hero p{
+  margin-top:10px;
+  color:var(--ink-soft);
+  font-size:16px;
+  max-width:46ch;
+}
+
+/* ---------- Start screen ---------- */
+.start-card{
+  background:var(--panel);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+  padding:28px 24px;
+  margin-top:8px;
+}
+.start-card ul{
+  margin:16px 0 0;
+  padding-left:0;
+  list-style:none;
+}
+.start-card li{
+  display:flex;
+  gap:10px;
+  padding:8px 0;
+  border-top:1px solid var(--line);
+  color:var(--ink-soft);
+  font-size:15px;
+}
+.start-card li:first-child{ border-top:none; }
+.start-card li span.dot{
+  width:8px; height:8px; border-radius:50%;
+  background:var(--green);
+  margin-top:8px;
+  flex:none;
+}
+
+/* ---------- Buttons ---------- */
+.btn{
+  appearance:none;
+  border:none;
+  cursor:pointer;
+  font-family:inherit;
+  font-weight:700;
+  font-size:16px;
+  border-radius:100px;
+  padding:14px 26px;
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+.btn:active{ transform: scale(0.97); }
+.btn-primary{
+  background:var(--green);
+  color:#fff;
+  box-shadow:0 8px 20px rgba(76,140,74,0.32);
+}
+.btn-primary:hover{ box-shadow:0 10px 24px rgba(76,140,74,0.4); }
+.btn-ghost{
+  background:transparent;
+  color:var(--ink);
+  border:1.5px solid var(--line);
+}
+.btn-block{ width:100%; display:block; }
+.btn:disabled{ opacity:.5; cursor:not-allowed; }
+
+/* ---------- Progress ---------- */
+.progress{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  margin-bottom:22px;
+}
+.progress .step{
+  width:9px; height:9px; border-radius:50%;
+  background:var(--line);
+}
+.progress .step.done{ background:var(--green); }
+.progress .step.current{ background:var(--ink); width:12px; height:12px; }
+.progress .label{
+  margin-left:auto;
+  font-size:13px;
+  color:var(--ink-soft);
+  font-weight:500;
+}
+
+/* ---------- Question card ---------- */
+.q-card{
+  background:var(--panel);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+  overflow:hidden;
+}
+.q-image{
+  width:100%;
+  aspect-ratio: 3 / 2;
+  object-fit:contain;
+  background:var(--green-soft);
+  display:block;
+}
+.q-body{ padding:24px; }
+.q-text{
+  font-size:19px;
+  font-weight:700;
+  margin-bottom:18px;
+}
+.choices{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+.choice{
+  text-align:left;
+  background:var(--bg);
+  border:1.5px solid var(--line);
+  border-radius:14px;
+  padding:14px 16px;
+  font-family:inherit;
+  font-size:15.5px;
+  color:var(--ink);
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  transition: border-color .15s ease, background .15s ease;
+}
+.choice:hover{ border-color: var(--green); }
+.choice .mark{
+  width:24px; height:24px;
+  border-radius:50%;
+  border:1.5px solid var(--line);
+  flex:none;
+  display:flex; align-items:center; justify-content:center;
+  font-size:13px; font-weight:700; color:#fff;
+}
+.choice.correct{
+  background:var(--green-soft);
+  border-color:var(--green);
+}
+.choice.correct .mark{ background:var(--green); border-color:var(--green); }
+.choice.wrong{
+  background:var(--red-soft);
+  border-color:var(--red);
+}
+.choice.wrong .mark{ background:var(--red); border-color:var(--red); }
+.choice[disabled]{ cursor:default; }
+
+/* ---------- Feedback / trivia ---------- */
+.feedback{
+  padding:0 24px 24px;
+}
+.result-tag{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  font-weight:700;
+  font-size:15px;
+  padding:6px 14px;
+  border-radius:100px;
+  margin-bottom:14px;
+}
+.result-tag.ok{ background:var(--green-soft); color:var(--green); }
+.result-tag.ng{ background:var(--red-soft); color:var(--red); }
+.trivia-box{
+  background:var(--bg);
+  border-left:3px solid var(--orange);
+  border-radius:10px;
+  padding:14px 16px;
+  font-size:14.5px;
+  color:var(--ink-soft);
+}
+.trivia-box .label{
+  font-weight:700;
+  color:var(--ink);
+  display:block;
+  margin-bottom:4px;
+  font-size:13.5px;
+}
+
+/* ---------- Result screen ---------- */
+.result-card{
+  background:var(--panel);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+  padding:32px 24px;
+  text-align:center;
+}
+.result-card .score{
+  font-family:'Zen Maru Gothic', sans-serif;
+  font-size:56px;
+  font-weight:900;
+  color:var(--green);
+  line-height:1;
+  margin:6px 0 2px;
+}
+.result-card .score span{ font-size:22px; color:var(--ink-soft); font-weight:700; }
+.result-card p.msg{ color:var(--ink-soft); margin:12px 0 22px; }
+
+.name-field{
+  margin:18px 0;
+  text-align:left;
+}
+.name-field label{
+  display:block;
+  font-size:13.5px;
+  font-weight:700;
+  color:var(--ink-soft);
+  margin-bottom:6px;
+}
+.name-field input{
+  width:100%;
+  padding:12px 14px;
+  border-radius:10px;
+  border:1.5px solid var(--line);
+  font-family:inherit;
+  font-size:16px;
+  background:var(--bg);
+  color:var(--ink);
+}
+.name-field input:focus{ outline:2px solid var(--green); outline-offset:1px; }
+
+.action-row{ display:flex; gap:10px; margin-top:8px; }
+.action-row .btn{ flex:1; }
+
+footer.site-footer{
+  text-align:center;
+  color:var(--ink-soft);
+  font-size:12.5px;
+  margin-top:40px;
+}
+footer.site-footer a{ color:var(--ink-soft); }
+
+@media (prefers-reduced-motion: reduce){
+  .btn{ transition:none; }
+}

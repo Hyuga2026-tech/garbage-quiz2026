@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>管理者画面｜ごみ分別クイズ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+  <div class="wrap admin-wrap">
+    <header class="hero">
+      <h1>管理者画面</h1>
+      <p>問題文・画像・選択肢・豆知識をここで編集できます。編集後は下の「JSONをエクスポート」で questions.json をダウンロードし、GitHub リポジトリの data/questions.json を置き換えてください。</p>
+    </header>
+
+    <div class="admin-toolbar">
+      <button class="btn btn-primary" id="add-question-btn">＋ 新しい問題を追加</button>
+      <button class="btn btn-ghost" id="preview-btn">プレビューをサイトで見る</button>
+      <button class="btn btn-ghost" id="import-btn">JSONを読み込む</button>
+      <input type="file" id="import-file" accept="application/json" style="display:none;">
+      <button class="btn btn-ghost" id="reset-btn">サンプルに戻す</button>
+      <button class="btn btn-primary" id="export-btn">JSONをエクスポート</button>
+    </div>
+    <p class="admin-note" id="save-note"></p>
+
+    <section class="admin-panel">
+      <h2>サイト全体の設定</h2>
+      <label class="field">
+        <span>サイトタイトル</span>
+        <input type="text" id="site-title-input">
+      </label>
+      <label class="field">
+        <span>サブタイトル</span>
+        <input type="text" id="site-subtitle-input">
+      </label>
+      <div class="grid-2">
+        <label class="field">
+          <span>修了証タイトル</span>
+          <input type="text" id="cert-title-input">
+        </label>
+        <label class="field">
+          <span>合格ライン（正答率 %）</span>
+          <input type="number" id="cert-pass-input" min="0" max="100">
+        </label>
+      </div>
+      <label class="field">
+        <span>修了証メッセージ</span>
+        <input type="text" id="cert-message-input">
+      </label>
+    </section>
+
+    <section class="admin-panel">
+      <h2>問題一覧</h2>
+      <div id="question-list"></div>
+    </section>
+  </div>
+
+  <template id="question-template">
+    <div class="q-editor">
+      <div class="q-editor-head">
+        <span class="q-editor-title"></span>
+        <button class="btn-icon delete-q" title="この問題を削除">削除</button>
+      </div>
+
+      <label class="field">
+        <span>問題文</span>
+        <textarea class="f-text" rows="2"></textarea>
+      </label>
+
+      <div class="field image-field">
+        <span>画像・イラスト（パス / URL、またはファイルをアップロード）</span>
+        <div class="image-row">
+          <img class="f-image-preview" alt="プレビュー">
+          <div class="image-controls">
+            <input type="text" class="f-image-path" placeholder="images/example.svg または https://...">
+            <label class="btn-file">
+              ファイルを選択
+              <input type="file" class="f-image-upload" accept="image/*" style="display:none;">
+            </label>
+            <button class="btn-link f-image-clear" type="button">画像を削除</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="field">
+        <span>選択肢（2〜3個・正解を1つ選択）</span>
+        <div class="choice-list"></div>
+        <button class="btn-link add-choice" type="button">＋ 選択肢を追加</button>
+      </div>
+
+      <label class="field">
+        <span>回答後に表示する豆知識</span>
+        <textarea class="f-trivia" rows="3"></textarea>
+      </label>
+    </div>
+  </template>
+
+  <template id="choice-template">
+    <div class="choice-row">
+      <input type="radio" class="f-choice-correct" name="">
+      <input type="text" class="f-choice-text" placeholder="選択肢のテキスト">
+      <button class="btn-link remove-choice" type="button">削除</button>
+    </div>
+  </template>
+
+  <script src="js/admin.js"></script>
+</body>
+</html>

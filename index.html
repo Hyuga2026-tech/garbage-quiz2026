@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ごみ分別クイズ</title>
+<meta name="description" content="まちがえやすい「ごみ分別あるある」に挑戦する2〜3択クイズ。答えると豆知識がわかり、最後に修了証がもらえます。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="wrap">
+    <header class="hero">
+      <svg class="eyebrow-icon" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="26" cy="26" r="25" fill="#E4F0E1"/>
+        <path d="M26 14a12 12 0 1 0 12 12" stroke="#4C8C4A" stroke-width="3" stroke-linecap="round"/>
+        <path d="M26 8l6 6-6 2z" fill="#4C8C4A"/>
+      </svg>
+      <h1 id="site-title">ごみ分別クイズ</h1>
+      <p id="site-subtitle">まちがえやすい「ごみ分別あるある」に挑戦しよう</p>
+    </header>
+
+    <main id="app"><p>読み込み中…</p></main>
+
+    <footer class="site-footer">
+      <p>分別ルールは自治体により異なります。実際に出す際はお住まいの自治体のルールをご確認ください。</p>
+      <p><a href="admin.html">管理者はこちら</a></p>
+    </footer>
+  </div>
+
+  <canvas id="cert-canvas" style="display:none;"></canvas>
+
+  <script src="js/certificate.js"></script>
+  <script src="js/quiz.js"></script>
+</body>
+</html>
