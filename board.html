@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>獲得者・ランキング｜ごみ分別クイズ</title>
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/board.css">
+</head>
+<body>
+  <div class="wrap">
+    <header class="hero">
+      <h1>獲得者・ランキング</h1>
+      <p>修了証を獲得した人と、連続正解数のランキングです。</p>
+    </header>
+
+    <div class="tabs" role="tablist">
+      <button class="tab active" id="tab-rank" role="tab" aria-selected="true">連続正解ランキング</button>
+      <button class="tab" id="tab-cert" role="tab" aria-selected="false">修了証の獲得者</button>
+    </div>
+
+    <section id="panel-rank" class="board-panel">
+      <ol class="board-list" id="rank-list"><li class="board-empty">読み込み中…</li></ol>
+    </section>
+
+    <section id="panel-cert" class="board-panel" hidden>
+      <ul class="board-list" id="cert-list"><li class="board-empty">読み込み中…</li></ul>
+    </section>
+
+    <p style="text-align:center; margin-top:28px;">
+      <a class="btn btn-primary" href="index.html" style="display:inline-block; text-decoration:none;">クイズに挑戦する</a>
+    </p>
+  </div>
+
+  <script src="js/firebase-config.js"></script>
+  <script type="module" src="js/firebase-service.js"></script>
+  <script type="module" src="js/board.js"></script>
+</body>
+</html>
