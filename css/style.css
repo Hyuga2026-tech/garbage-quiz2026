@@ -285,3 +285,36 @@ footer.site-footer a{ color:var(--ink-soft); }
 @media (prefers-reduced-motion: reduce){
   .btn{ transition:none; }
 }
+
+/* ---------- Streak / Firebase 連携 ---------- */
+.streak-badge{
+  display:inline-block;
+  background:#FFF1E0;
+  color:#B8651A;
+  font-size:12.5px;
+  font-weight:700;
+  padding:3px 10px;
+  border-radius:100px;
+  margin-left:10px;
+}
+.progress .streak-badge{ margin-left:auto; margin-right:8px; }
+.streak-result{
+  margin:4px 0 0;
+  color:var(--ink-soft);
+  font-size:15px;
+}
+.streak-result strong{ color:var(--orange); font-size:20px; font-family:'Zen Maru Gothic', sans-serif; }
+.share-check{
+  display:flex;
+  gap:10px;
+  align-items:flex-start;
+  text-align:left;
+  font-size:14px;
+  margin:6px 0 14px;
+  cursor:pointer;
+}
+.share-check input{ width:18px; height:18px; margin-top:3px; accent-color:var(--green); flex:none; }
+.share-check small{ color:var(--ink-soft); font-size:12.5px; }
+.cloud-status{ min-height:20px; margin:12px 0 0; font-size:14px; font-weight:500; }
+.cloud-status.ok{ color:var(--green); }
+.cloud-status.error{ color:var(--red); }
