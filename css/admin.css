@@ -141,3 +141,95 @@
   background:var(--bg);
 }
 .choice-row input[type="radio"]{ width:18px; height:18px; accent-color: var(--green); flex:none; }
+
+/* ---------- パスワード画面 ---------- */
+[hidden]{ display:none !important; }
+.gate{
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:24px 20px;
+}
+.gate-card{
+  width:100%;
+  max-width:360px;
+  background:var(--panel);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+  padding:28px 24px;
+}
+.gate-card h1{ font-size:22px; font-weight:900; }
+.gate-card p{ color:var(--ink-soft); font-size:14.5px; margin:8px 0 18px; }
+.gate-card input[type="password"]{
+  width:100%;
+  padding:12px 14px;
+  border-radius:10px;
+  border:1.5px solid var(--line);
+  font-family:inherit;
+  font-size:18px;
+  letter-spacing:0.2em;
+  background:var(--bg);
+  color:var(--ink);
+}
+.gate-card input[type="password"]:focus{ outline:2px solid var(--green); outline-offset:1px; }
+.gate-error{ color:var(--red) !important; min-height:20px; margin:4px 0 12px !important; font-weight:700; }
+.gate-back{ text-align:center; margin:16px 0 0 !important; }
+.gate-back a{ color:var(--ink-soft); }
+
+/* ---------- ランキング管理 ---------- */
+.admin-note.error{ color:var(--red); }
+.manage-tools{
+  display:flex;
+  flex-wrap:wrap;
+  gap:12px;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:8px;
+}
+.manage-tools .share-check{ margin:0; flex:1; min-width:240px; }
+.manage-tools .btn{ padding:9px 16px; font-size:14px; }
+.manage-h{
+  font-family:'Zen Maru Gothic', sans-serif;
+  font-size:15px;
+  margin:20px 0 8px;
+}
+.manage-list{
+  list-style:none;
+  margin:0;
+  padding:0;
+  border:1.5px solid var(--line);
+  border-radius:14px;
+  overflow:hidden;
+  max-height:420px;
+  overflow-y:auto;
+}
+.manage-row{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:11px 14px;
+  border-top:1px solid var(--line);
+}
+.manage-row:first-child{ border-top:none; }
+.manage-empty{ padding:14px; color:var(--ink-soft); font-size:14px; text-align:center; }
+.manage-who{ flex:1; min-width:0; }
+.manage-name{ font-weight:700; overflow-wrap:anywhere; }
+.manage-sub{ font-size:12.5px; color:var(--ink-soft); }
+.manage-actions{ display:flex; align-items:center; gap:12px; flex:none; }
+.manage-cancel{ color:var(--ink-soft); }
+.manage-input{
+  flex:1;
+  min-width:0;
+  padding:8px 10px;
+  border-radius:8px;
+  border:1.5px solid var(--green);
+  font-family:inherit;
+  font-size:15px;
+  background:var(--bg);
+  color:var(--ink);
+}
+@media (max-width:480px){
+  .manage-row{ flex-wrap:wrap; }
+  .manage-actions{ width:100%; justify-content:flex-end; }
+}

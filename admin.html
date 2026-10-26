@@ -9,7 +9,22 @@
 <link rel="stylesheet" href="css/admin.css">
 </head>
 <body>
-  <div class="wrap admin-wrap">
+  <!-- パスワード画面：正しく入力するまで管理画面は表示されません -->
+  <div class="gate" id="gate">
+    <form class="gate-card" id="gate-form" autocomplete="off">
+      <h1>管理者ログイン</h1>
+      <p>パスワードを入力してください。</p>
+      <label class="field">
+        <span>パスワード</span>
+        <input type="password" id="gate-input" inputmode="numeric" autocomplete="current-password" autofocus>
+      </label>
+      <p class="gate-error" id="gate-error" role="alert"></p>
+      <button class="btn btn-primary btn-block" id="gate-btn" type="submit">ログイン</button>
+      <p class="gate-back"><a href="index.html">クイズに戻る</a></p>
+    </form>
+  </div>
+
+  <div class="wrap admin-wrap" id="admin-main" hidden>
     <header class="hero">
       <h1>管理者画面</h1>
       <p>問題文・画像・選択肢・豆知識をここで編集できます。編集後は下の「JSONをエクスポート」で questions.json をダウンロードし、GitHub リポジトリの data/questions.json を置き換えてください。</p>
@@ -49,6 +64,25 @@
         <span>修了証メッセージ</span>
         <input type="text" id="cert-message-input">
       </label>
+    </section>
+
+    <section class="admin-panel" id="board-admin">
+      <h2>ランキング・獲得者の管理</h2>
+      <p class="admin-note" id="board-status" role="status">ログイン中…</p>
+      <div class="manage-tools">
+        <label class="share-check">
+          <input type="checkbox" id="bulk-check">
+          <span>同じ名前の記録をまとめて変更・削除する<br>
+          <small>ランキングと獲得者一覧の両方で、同じ名前の記録がすべて対象になります。</small></span>
+        </label>
+        <button class="btn btn-ghost" id="board-reload-btn" type="button">再読み込み</button>
+      </div>
+
+      <h3 class="manage-h">連続正解ランキング</h3>
+      <ul class="manage-list" id="manage-streaks"></ul>
+
+      <h3 class="manage-h">修了証の獲得者</h3>
+      <ul class="manage-list" id="manage-certs"></ul>
     </section>
 
     <section class="admin-panel">
@@ -105,6 +139,10 @@
     </div>
   </template>
 
+  <script src="js/firebase-config.js"></script>
+  <script type="module" src="js/firebase-service.js"></script>
   <script src="js/admin.js"></script>
+  <script src="js/admin-gate.js"></script>
+  <script src="js/admin-board.js"></script>
 </body>
 </html>

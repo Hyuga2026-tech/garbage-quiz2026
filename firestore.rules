@@ -1,10 +1,17 @@
 rules_version = '2';
 
 // Firebaseコンソール → Firestore Database → ルール に、この内容を貼り付けて「公開」してください。
-// 方針：誰でも閲覧OK／新規追加は形式チェック付きでOK／書き換え・削除は不可
-//       （不適切な名前の削除は、管理者がFirebaseコンソールから行います）
+// 方針：誰でも閲覧OK／新規追加は形式チェック付きでOK
+//       名前の変更・削除は「管理者アカウントでログイン中」のときだけOK
+//       （管理者アカウントは Firebase Authentication に作成します。README参照）
 service cloud.firestore {
   match /databases/{database}/documents {
+
+    // js/firebase-config.js の FIREBASE_ADMIN_EMAIL と同じメールアドレスにしてください
+    function isAdmin() {
+      return request.auth != null
+          && request.auth.token.email == 'admin@gomi-quiz.example.com';
+    }
 
     function validName() {
       return request.resource.data.name is string
@@ -21,12 +28,19 @@ service cloud.firestore {
           && request.resource.data.score <= request.resource.data.total;
     }
 
+    // 更新できるのは name だけ（点数や日時の改ざんは不可）
+    function onlyNameChanged() {
+      return request.resource.data.diff(resource.data).affectedKeys().hasOnly(['name'])
+          && validName();
+    }
+
     match /certificates/{id} {
       allow read: if true;
       allow create: if validName() && validCounts()
         && request.resource.data.keys().hasOnly(['name', 'score', 'total', 'createdAt'])
         && request.resource.data.createdAt == request.time;
-      allow update, delete: if false;
+      allow update: if isAdmin() && onlyNameChanged();
+      allow delete: if isAdmin();
     }
 
     match /streaks/{id} {
@@ -37,7 +51,8 @@ service cloud.firestore {
         && request.resource.data.maxStreak >= 0
         && request.resource.data.maxStreak <= request.resource.data.total
         && request.resource.data.createdAt == request.time;
-      allow update, delete: if false;
+      allow update: if isAdmin() && onlyNameChanged();
+      allow delete: if isAdmin();
     }
   }
 }

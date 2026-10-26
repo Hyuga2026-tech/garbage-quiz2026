@@ -7,17 +7,28 @@
  */
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
 import {
-  getFirestore, collection, addDoc, query, orderBy, limit, getDocs, serverTimestamp
+  getFirestore, collection, addDoc, query, orderBy, limit, getDocs, serverTimestamp,
+  doc, updateDoc, deleteDoc
 } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+import {
+  getAuth, signInWithEmailAndPassword, signOut, setPersistence, browserSessionPersistence
+} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
 
 const cfg = window.FIREBASE_CONFIG || {};
+const ADMIN_EMAIL = window.FIREBASE_ADMIN_EMAIL || "admin@gomi-quiz.example.com";
+// Firebase のパスワードは6文字以上が必要なため、管理者が入力した文字の前に固定の文字を付けます。
+// （管理者画面で「0104」と入力 → Firebaseには「gomi-0104」として送信）
+const PASSWORD_PREFIX = "gomi-";
 const enabled = !!cfg.apiKey && !String(cfg.apiKey).startsWith("YOUR_") &&
                 !!cfg.projectId && !String(cfg.projectId).startsWith("YOUR_");
 
 let db = null;
+let auth = null;
 if (enabled) {
   try {
-    db = getFirestore(initializeApp(cfg));
+    const app = initializeApp(cfg);
+    db = getFirestore(app);
+    auth = getAuth(app);
   } catch (e) {
     console.error("Firebase の初期化に失敗しました", e);
   }
@@ -73,7 +84,7 @@ async function fetchCertificates(n = 50) {
  *  複合インデックスを避けるため、上位をまとめて取得してから並べ替えます。 */
 async function fetchStreakRanking(n = 20) {
   if (!ok()) return [];
-  const snap = await getDocs(query(collection(db, "streaks"), orderBy("maxStreak", "desc"), limit(200)));
+  const snap = await getDocs(query(collection(db, "streaks"), orderBy("maxStreak", "desc"), limit(Math.max(200, n))));
   const rows = snap.docs.map(d => {
     const v = d.data();
     return {
@@ -92,5 +103,41 @@ async function fetchStreakRanking(n = 20) {
   return rows.slice(0, n);
 }
 
-window.GomiCloud = { enabled: ok(), addCertificate, addStreak, fetchCertificates, fetchStreakRanking };
+/* ---------- 管理者用（要ログイン。権限は firestore.rules で制限） ---------- */
+
+/** 管理者ログイン。ブラウザのタブを閉じるとログアウトされます。 */
+async function adminSignIn(password) {
+  if (!ok() || !auth) throw new Error("Firebase is not configured");
+  await setPersistence(auth, browserSessionPersistence);
+  await signInWithEmailAndPassword(auth, ADMIN_EMAIL, PASSWORD_PREFIX + String(password));
+}
+
+async function adminSignOut() {
+  if (auth) await signOut(auth);
+}
+
+const isAdminSignedIn = () => !!(auth && auth.currentUser);
+
+function collectionName(kind) {
+  if (kind === "certificates" || kind === "streaks") return kind;
+  throw new Error("unknown collection");
+}
+
+/** 記録を削除（管理者のみ） */
+async function adminDelete(kind, id) {
+  if (!ok()) throw new Error("Firebase is not configured");
+  await deleteDoc(doc(db, collectionName(kind), id));
+}
+
+/** 名前を変更（管理者のみ。name 以外は書き換えられません） */
+async function adminRename(kind, id, newName) {
+  if (!ok()) throw new Error("Firebase is not configured");
+  await updateDoc(doc(db, collectionName(kind), id), { name: cleanName(newName) });
+}
+
+window.GomiCloud = {
+  enabled: ok(),
+  addCertificate, addStreak, fetchCertificates, fetchStreakRanking,
+  adminSignIn, adminSignOut, isAdminSignedIn, adminDelete, adminRename
+};
 window.dispatchEvent(new Event("gomicloud-ready"));
