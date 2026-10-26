@@ -2,7 +2,7 @@ rules_version = '2';
 
 // Firebaseコンソール → Firestore Database → ルール に、この内容を貼り付けて「公開」してください。
 // 方針：誰でも閲覧OK／新規追加は形式チェック付きでOK
-//       名前の変更・削除は「管理者アカウントでログイン中」のときだけOK
+//       名前の変更・削除、問題・サイト設定の公開は「管理者アカウントでログイン中」のときだけOK
 //       （管理者アカウントは Firebase Authentication に作成します。README参照）
 service cloud.firestore {
   match /databases/{database}/documents {
@@ -32,6 +32,38 @@ service cloud.firestore {
     function onlyNameChanged() {
       return request.resource.data.diff(resource.data).affectedKeys().hasOnly(['name'])
           && validName();
+    }
+
+    // 問題1件の形式チェック（画像は縮小したdata URLを想定し、約500KBまで）
+    function validQuestion() {
+      return request.resource.data.keys().hasOnly(['text', 'image', 'choices', 'correctIndex', 'trivia', 'order'])
+          && request.resource.data.text is string && request.resource.data.text.size() <= 500
+          && request.resource.data.image is string && request.resource.data.image.size() <= 500000
+          && request.resource.data.choices is list
+          && request.resource.data.choices.size() >= 2 && request.resource.data.choices.size() <= 3
+          && request.resource.data.correctIndex is int
+          && request.resource.data.correctIndex >= 0
+          && request.resource.data.correctIndex < request.resource.data.choices.size()
+          && request.resource.data.trivia is string && request.resource.data.trivia.size() <= 1000
+          && request.resource.data.order is int;
+    }
+
+    // 公開中の問題：誰でも読める／管理者だけが追加・変更・削除できる
+    match /questions/{id} {
+      allow read: if true;
+      allow create, update: if isAdmin() && validQuestion();
+      allow delete: if isAdmin();
+    }
+
+    // サイト名・修了証の設定（1件だけ）
+    match /settings/site {
+      allow read: if true;
+      allow create, update: if isAdmin()
+        && request.resource.data.keys().hasOnly(['siteTitle', 'siteSubtitle', 'certificate'])
+        && request.resource.data.siteTitle is string && request.resource.data.siteTitle.size() <= 100
+        && request.resource.data.siteSubtitle is string && request.resource.data.siteSubtitle.size() <= 200
+        && request.resource.data.certificate is map;
+      allow delete: if isAdmin();
     }
 
     match /certificates/{id} {

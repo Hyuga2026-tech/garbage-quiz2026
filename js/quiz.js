@@ -15,14 +15,57 @@
 
   const cloudOn = () => !!(window.GomiCloud && window.GomiCloud.enabled);
 
+  // firebase-service.js（module）の準備を待つ。間に合わない・失敗した場合は null
+  function waitForCloud(ms) {
+    return new Promise(resolve => {
+      if (window.GomiCloud) return resolve(window.GomiCloud);
+      const timer = setTimeout(() => resolve(window.GomiCloud || null), ms);
+      window.addEventListener('gomicloud-ready', () => { clearTimeout(timer); resolve(window.GomiCloud); }, { once: true });
+    });
+  }
+
+  function isUsable(d) {
+    return d && Array.isArray(d.questions) && d.questions.length > 0;
+  }
+
+  /* 読み込みの優先順位：
+   *  1. （?preview=1 のときだけ）管理者画面で編集中の下書き
+   *  2. Firebaseに「公開」された問題（全員に共通）
+   *  3. data/questions.json（初期データ。Firebase未設定・未公開・通信失敗時の予備） */
   async function loadData() {
-    const local = localStorage.getItem(LOCAL_KEY);
-    if (local) {
-      try { return JSON.parse(local); } catch (e) { /* fall through to fetch */ }
+    let defaults = null;
+    try {
+      const res = await fetch('data/questions.json', { cache: 'no-store' });
+      if (res.ok) defaults = await res.json();
+    } catch (e) { /* 下で別の取得元を試す */ }
+
+    if (new URLSearchParams(location.search).get('preview') === '1') {
+      try {
+        const draft = JSON.parse(localStorage.getItem(LOCAL_KEY));
+        if (isUsable(draft)) return draft;
+      } catch (e) { /* 下書きなし */ }
     }
-    const res = await fetch('data/questions.json', { cache: 'no-store' });
-    if (!res.ok) throw new Error('failed to load questions.json');
-    return res.json();
+
+    const cloud = await waitForCloud(4000);
+    if (cloud && cloud.enabled) {
+      try {
+        const published = await cloud.fetchQuiz();
+        if (isUsable(published)) {
+          // サイト名などが未設定の項目は初期データで補う
+          return Object.assign({}, defaults || {}, stripEmpty(published));
+        }
+      } catch (e) {
+        console.error('公開中の問題の取得に失敗したため、初期データを使います', e);
+      }
+    }
+    if (isUsable(defaults)) return defaults;
+    throw new Error('no question data available');
+  }
+
+  function stripEmpty(obj) {
+    const out = {};
+    Object.keys(obj).forEach(k => { if (obj[k] !== undefined && obj[k] !== '') out[k] = obj[k]; });
+    return out;
   }
 
   function shuffledIndices(n) {

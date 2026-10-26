@@ -8,7 +8,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
 import {
   getFirestore, collection, addDoc, query, orderBy, limit, getDocs, serverTimestamp,
-  doc, updateDoc, deleteDoc
+  doc, updateDoc, deleteDoc, getDoc, writeBatch
 } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 import {
   getAuth, signInWithEmailAndPassword, signOut, setPersistence, browserSessionPersistence
@@ -135,9 +135,70 @@ async function adminRename(kind, id, newName) {
   await updateDoc(doc(db, collectionName(kind), id), { name: cleanName(newName) });
 }
 
+/* ---------- 問題データ（全員に共通で表示される「公開中」の内容） ----------
+ *  settings/site      … サイト名・修了証の設定
+ *  questions/{id}     … 問題1件ずつ（order で並び順を保持）
+ */
+
+/** 公開中のクイズを取得。まだ公開されていなければ null */
+async function fetchQuiz() {
+  if (!ok()) return null;
+  const [siteSnap, qSnap] = await Promise.all([
+    getDoc(doc(db, "settings", "site")),
+    getDocs(collection(db, "questions"))
+  ]);
+  const questions = qSnap.docs
+    .map(d => ({ id: d.id, ...d.data() }))
+    .sort((a, b) => (a.order || 0) - (b.order || 0))
+    .map(({ order, ...q }) => q);
+  if (!questions.length) return null;
+  const site = siteSnap.exists() ? siteSnap.data() : {};
+  return {
+    siteTitle: site.siteTitle,
+    siteSubtitle: site.siteSubtitle,
+    certificate: site.certificate,
+    questions
+  };
+}
+
+/** 問題とサイト設定を公開（管理者のみ）。含まれない既存の問題は削除されます。 */
+async function publishQuiz(data) {
+  if (!ok()) throw new Error("Firebase is not configured");
+  const existing = await getDocs(collection(db, "questions"));
+  const keep = new Set();
+  const batch = writeBatch(db);
+
+  batch.set(doc(db, "settings", "site"), {
+    siteTitle: String(data.siteTitle || ""),
+    siteSubtitle: String(data.siteSubtitle || ""),
+    certificate: {
+      title: String((data.certificate && data.certificate.title) || ""),
+      message: String((data.certificate && data.certificate.message) || ""),
+      passPercent: Number((data.certificate && data.certificate.passPercent) || 0)
+    }
+  });
+
+  data.questions.forEach((q, i) => {
+    const id = String(q.id);
+    keep.add(id);
+    batch.set(doc(db, "questions", id), {
+      text: String(q.text || ""),
+      image: String(q.image || ""),
+      choices: q.choices.map(c => String(c)),
+      correctIndex: Number(q.correctIndex) || 0,
+      trivia: String(q.trivia || ""),
+      order: i
+    });
+  });
+  existing.docs.forEach(d => { if (!keep.has(d.id)) batch.delete(d.ref); });
+
+  await batch.commit(); // まとめて1回で反映（途中で失敗しても中途半端な状態にならない）
+}
+
 window.GomiCloud = {
   enabled: ok(),
   addCertificate, addStreak, fetchCertificates, fetchStreakRanking,
-  adminSignIn, adminSignOut, isAdminSignedIn, adminDelete, adminRename
+  adminSignIn, adminSignOut, isAdminSignedIn, adminDelete, adminRename,
+  fetchQuiz, publishQuiz
 };
 window.dispatchEvent(new Event("gomicloud-ready"));

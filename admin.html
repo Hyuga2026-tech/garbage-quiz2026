@@ -27,16 +27,17 @@
   <div class="wrap admin-wrap" id="admin-main" hidden>
     <header class="hero">
       <h1>管理者画面</h1>
-      <p>問題文・画像・選択肢・豆知識をここで編集できます。編集後は下の「JSONをエクスポート」で questions.json をダウンロードし、GitHub リポジトリの data/questions.json を置き換えてください。</p>
+      <p>問題文・画像・選択肢・豆知識をここで編集できます。編集中の内容は下書きとして自動保存され、「公開する」を押すとすべての利用者の画面に反映されます。</p>
     </header>
 
     <div class="admin-toolbar">
-      <button class="btn btn-primary" id="add-question-btn">＋ 新しい問題を追加</button>
-      <button class="btn btn-ghost" id="preview-btn">プレビューをサイトで見る</button>
+      <button class="btn btn-primary" id="publish-btn">公開する（全員に反映）</button>
+      <button class="btn btn-ghost" id="preview-btn">下書きを確認する</button>
+      <button class="btn btn-ghost" id="add-question-btn">＋ 新しい問題を追加</button>
+      <button class="btn btn-ghost" id="reset-btn">公開中の内容に戻す</button>
+      <button class="btn btn-ghost" id="export-btn">JSONをバックアップ保存</button>
       <button class="btn btn-ghost" id="import-btn">JSONを読み込む</button>
       <input type="file" id="import-file" accept="application/json" style="display:none;">
-      <button class="btn btn-ghost" id="reset-btn">サンプルに戻す</button>
-      <button class="btn btn-primary" id="export-btn">JSONをエクスポート</button>
     </div>
     <p class="admin-note" id="save-note"></p>
 
@@ -104,7 +105,7 @@
       </label>
 
       <div class="field image-field">
-        <span>画像・イラスト（パス / URL、またはファイルをアップロード）</span>
+        <span>画像・イラスト（パス / URL、またはファイルをアップロード。写真は自動で縮小されます）</span>
         <div class="image-row">
           <img class="f-image-preview" alt="プレビュー">
           <div class="image-controls">
