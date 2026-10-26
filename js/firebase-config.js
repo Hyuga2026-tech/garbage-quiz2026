@@ -9,10 +9,11 @@
  *    獲得者一覧・ランキング機能は無効になります。
  */
 window.FIREBASE_CONFIG = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT_ID.appspot.com",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyCY7pOiNgN9gqtFCeSFV-HLqxCqnitf7EY",
+  authDomain: "garbage-quiz2026.firebaseapp.com",
+  projectId: "garbage-quiz2026",
+  storageBucket: "garbage-quiz2026.firebasestorage.app",
+  messagingSenderId: "878433880035",
+  appId: "1:878433880035:web:c493b2c65d2bf4a59302d6",
+  measurementId: "G-K7DXEC2QY8"
 };
