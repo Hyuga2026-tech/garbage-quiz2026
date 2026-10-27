@@ -204,8 +204,14 @@
   function renderResult() {
     const total = order.length;
     const percent = Math.round((score / total) * 100);
-    const passPercent = (data.certificate && data.certificate.passPercent) || 60;
+    const rawPass = data.certificate && data.certificate.passPercent;
+    const passPercent = (rawPass === 0 || rawPass) ? Number(rawPass) : 60; // 0%も有効な値として扱う
     const passed = percent >= passPercent;
+    // 合格まであと何問か（合格ラインに届く最小の正解数 − 現在の正解数）。届かない設定のときは null
+    let needMore = null;
+    for (let n = score; n <= total; n++) {
+      if (Math.round((n / total) * 100) >= passPercent) { needMore = n - score; break; }
+    }
     const cloud = cloudOn();
 
     // 主ボタン：合格→修了証発行 / 不合格でもFirebaseが有効ならランキング登録
@@ -225,8 +231,7 @@
         <h2 style="font-size:18px; color:var(--ink-soft);">結果発表</h2>
         <div class="score">${score}<span> / ${total} 問正解</span></div>
         <p class="streak-result">最高連続正解：<strong>${maxStreak}</strong> 問</p>
-        <p class="msg">${passed ? 'すばらしい！ごみ分別マスターに認定です。' : 'もう少し！復習してもう一度挑戦してみましょう。'}</p>
-
+        <p class="msg">${passed ? 'すばらしい！ごみ分別マスターに認定です。' : (needMore ? `あと${needMore}問で合格です。合格すれば修了証が獲得できます。` : 'もう少し！復習してもう一度挑戦してみましょう。')}</p>
         ${(passed || (cloud && maxStreak >= 1)) ? `
         <div class="name-field">
           <label for="cert-name">${passed ? '修了証に記載するお名前（ニックネーム可）' : 'ランキングに載せるお名前（ニックネーム可）'}</label>
